@@ -1,0 +1,97 @@
+name: MyProject
+options:
+  bundleIdPrefix: com.hsbc.global.mobile.MobileFoundationSkeleton
+  xcodeVersion: 9.3
+  deploymentTarget: 
+    iOS: "9.0"
+
+
+configs:
+  Test Debug: debug
+  Staging Debug: debug
+  Production Debug: debug
+  Test Release: release
+  Staging Release: release
+  Production Release: release
+  
+  
+targets:
+
+  MyApp:
+    scheme:
+      testTargets:
+        - MyUnitTests
+        - MyUITests
+      configVariants:
+        - Test
+        - Staging
+        - Production
+      gatherCoverageData: true
+    type: application
+    sources: MyApp
+
+      
+    dependencies:
+      - target: MyFramework
+    removeHeaders: false 
+    platform: iOS
+    configFiles:
+      Test Debug: MyApp/debug.xcconfig
+      Production Release: MyApp/release.xcconfig
+    settings:
+      base:
+        BUILD_SETTING_1: value 1
+        CUSTOM_BUILD_SETTING: my_value
+      configs:
+        Test:
+          BUILD_SETTING_2: Debug value 2
+        Production:
+          BUILD_SETTING_2: Release value 2
+
+    prebuildScripts:
+      - path: MyApp/prebuild.sh
+        name: My prebuild
+       
+    postbuildScripts:
+      - path: MyApp/postbuild.sh
+        name: My postbuild
+
+
+
+  MyFramework:
+    type: framework
+    sources: MyFramework
+    dependencies:
+      - carthage: TealiumIOS
+      - carthage: TealiumIOSLifecycle
+    scheme:
+      testTargets:
+        - MyFrameworkUnitTests
+      gatherCoverageData: true
+    platform: iOS
+
+
+  MyFrameworkUnitTests:
+    type: bundle.unit-test
+    sources: MyFrameworkUnitTests
+    platform: iOS
+
+
+
+  MyUnitTests:
+    type: bundle.unit-test
+    
+    sources: MyUnitTests
+    platform: iOS
+
+
+  MyUITests:
+    type: bundle.ui-testing
+    sources: MyUITests
+    dependencies: 
+      - target: MyApp
+    platform: iOS
+
+
+    
+    
